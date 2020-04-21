@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import styleClasses from './Quiz.module.scss'
 import ActiveQuiz from '../../components/activequiz/ActiveQuiz'
 import FinishedQuiz from '../../components/finishedquiz/FinishedQuiz'
+import Loader from '../../components/UI/loader/Loader'
+import axios from '../../axios/axios-quiz'
 
 class Quiz extends Component {
     state = {
@@ -9,32 +11,8 @@ class Quiz extends Component {
         activeQuestion: 0,
         answerState: null,
         isFinished: false,
-        quiz: [
-            {
-                question: 'Сколько планет вращается вокруг Солнца?',
-                rightAnswerId: 3,
-                id: 1,
-                answers: [
-                    {text: "1 планета", id: 1},
-                    {text: "4 планеты", id: 2},
-                    {text: "8 планет", id: 3},
-                    {text: "9 планет", id: 4},
-                    {text: "нет верного ответа", id: 5}
-                ]
-            },
-            {
-                question: 'Самая большая планета в Солнечной системе:',
-                rightAnswerId: 2,
-                id: 2,
-                answers: [
-                    {text: "Меркурий", id: 1},
-                    {text: "Юпитер", id: 2},
-                    {text: "Земля", id: 3},
-                    {text: "Сатурн", id: 4},
-                    {text: "нет верного ответа", id: 5}
-                ]
-            }
-        ]
+        quiz: [],
+        loading: true
     }
 
     isQuizFinished() {
@@ -96,26 +74,43 @@ class Quiz extends Component {
         })
     }
 
+    async componentDidMount() {
+        try {
+            const response = await axios.get(`quizes/${this.props.match.params.id}.json`)
+            const quiz = response.data
+
+            this.setState({
+                quiz,
+                loading: false
+            })
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
     render() {
         return (
             <div className={styleClasses.Quiz}>
                 <div className={styleClasses.QuizWrapper}>
                     <h1>Answer the questions</h1>
+
                     {
-                        this.state.isFinished
-                        ? <FinishedQuiz
-                            results={this.state.results}
-                            quiz={this.state.quiz}
-                            onRetry={this.retryHandler}
-                        />
-                        : <ActiveQuiz
-                            question={this.state.quiz[this.state.activeQuestion].question}
-                            answers={this.state.quiz[this.state.activeQuestion].answers}
-                            onAnswerClick={this.onAnswerClickHandler}
-                            quizLength={this.state.quiz.length}
-                            numberOfQuestion={this.state.activeQuestion + 1}
-                            state={this.state.answerState}
-                        />
+                        this.state.loading
+                        ? <Loader />
+                        : this.state.isFinished
+                            ? <FinishedQuiz
+                                results={this.state.results}
+                                quiz={this.state.quiz}
+                                onRetry={this.retryHandler}
+                            />
+                            : <ActiveQuiz
+                                question={this.state.quiz[this.state.activeQuestion].question}
+                                answers={this.state.quiz[this.state.activeQuestion].answers}
+                                onAnswerClick={this.onAnswerClickHandler}
+                                quizLength={this.state.quiz.length}
+                                numberOfQuestion={this.state.activeQuestion + 1}
+                                state={this.state.answerState}
+                            />
                     }
                     
                 </div>
