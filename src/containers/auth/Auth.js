@@ -133,25 +133,27 @@ export default class Auth extends Component {
     render() {
         return (
             <div className={styleClasses.Auth}>
-                <h1>Авторизация</h1>
-                <form onSubmit={this.submitHandler} className={styleClasses.AuthForm}>
-                    {this.renderInputs()}
+                <div>
+                    <h1>Авторизация</h1>
+                    <form onSubmit={this.submitHandler} className={styleClasses.AuthForm}>
+                        {this.renderInputs()}
 
-                    <Button
-                        type="success"
-                        onClick={this.loginHandler}
-                        disabled={!this.state.isFormValid}
-                    >
-                        Войти
-                    </Button>
-                    <Button
-                        type="primary"
-                        onClick={this.registerHandler}
-                        disabled={!this.state.isFormValid}
-                    >
-                        Зарегистрироваться
-                    </Button>
-                </form>
+                        <Button
+                            type="success"
+                            onClick={this.loginHandler}
+                            disabled={!this.state.isFormValid}
+                        >
+                            Войти
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={this.registerHandler}
+                            disabled={!this.state.isFormValid}
+                        >
+                            Зарегистрироваться
+                        </Button>
+                    </form>
+                </div>
             </div>
         )
     }
