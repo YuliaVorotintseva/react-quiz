@@ -1,17 +1,17 @@
-import React, {Component, Fragment} from 'react'
+import React, { Fragment } from 'react'
 import styleClasses from './Drawer.module.scss'
 import BackDrop from '../../UI/backdrop/BackDrop'
 import {NavLink} from 'react-router-dom'
 
-class Drawer extends Component {
-    renderLinks(links) {
+const Drawer = props => {
+    function renderLinks(links) {
         return links.map((link, index) => (
             <li key={index}>
                 <NavLink
                     to={link.to}
                     exact={link.exact}
                     activeClassName={styleClasses.active}
-                    onClick={() => this.props.onClose()}
+                    onClick={() => props.onClose()}
                 >
                     {link.label}
                 </NavLink>
@@ -19,57 +19,55 @@ class Drawer extends Component {
         ))
     }
 
-    render() {
-        const cls = [styleClasses.Drawer] 
-        if(!this.props.isOpen) {
-            cls.push(styleClasses.close)
-        }
+    const cls = [styleClasses.Drawer] 
+    if(!props.isOpen) {
+        cls.push(styleClasses.close)
+    }
 
-        const links = [
+    const links = [
+       {
+            to: '/',
+            label: 'Список тестов',
+            exact: true
+        }
+    ]
+
+    if(props.isAuthenticated) {
+        links.push(
             {
-                to: '/',
-                label: 'Список тестов',
-                exact: true
+                to: '/quiz-creator',
+                label: 'Создать тест',
+                exact: false
             }
-        ]
+        )
 
-        if(this.props.isAuthenticated) {
-            links.push(
-                {
-                    to: '/quiz-creator',
-                    label: 'Создать тест',
-                    exact: false
-                }
-            )
-
-            links.push(
-                {
-                    to: '/logout',
-                    label: 'Выйти',
-                    exact: false
-                }
-            )
-        } else {
-            links.push(
-                {
-                    to: '/auth',
-                    label: 'Авторизация',
-                    exact: false
-                }
-            )
-        }
-
-        return (
-            <Fragment>
-                <nav className={cls.join(' ')}>
-                    <ul>
-                        {this.renderLinks(links)}
-                    </ul>
-                </nav>
-                {this.props.isOpen ? <BackDrop onClick={this.props.onClose} /> : null}
-            </Fragment>
+        links.push(
+            {
+                to: '/logout',
+                label: 'Выйти',
+                exact: false
+            }
+        )
+    } else {
+        links.push(
+            {
+                to: '/auth',
+                label: 'Авторизация',
+                exact: false
+            }
         )
     }
+
+    return (
+        <Fragment>
+            <nav className={cls.join(' ')}>
+                <ul>
+                    {renderLinks(links)}
+                </ul>
+            </nav>
+            {props.isOpen ? <BackDrop onClick={props.onClose} /> : null}
+        </Fragment>
+    )
 }
 
 export default Drawer
