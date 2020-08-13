@@ -163,5 +163,3 @@ class QuizCreator extends React.Component {
 const mapStateToProps = state => ({quiz: state.create.quiz})
 
 export default connect(mapStateToProps, {createQuizQuestion, finishCreateQuiz})(QuizCreator)
-//export default connect(mapStateToProps, mapDispatchToProps)(QuizCreator)
-
