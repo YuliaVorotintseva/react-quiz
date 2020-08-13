@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Layout from './hoc/layout/Layout'
 import Quiz from './containers/quiz/Quiz'
 import Auth from './containers/auth/Auth'
@@ -9,47 +9,41 @@ import {Route, Switch, Redirect, withRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {autoLogin} from './store/actions/Auth'
 
-const App = props => {
-  useEffect(() => props.autoLogin())
+class App extends React.Component {
+  componentDidMount() {
+    this.props.autoLogin()
+  }
 
-  let routes = (
-    <Switch>
-      <Route path='/auth' component={Auth} />
-      <Route path='/quiz/:id' component={Quiz} />
-      <Route path='/' exact component={QuizList} />
-      <Redirect to='/' />
-    </Switch>
-  )
-
-  if(props.isAuthenticated) {
-    routes = (
+  render() {
+    let routes = (
       <Switch>
-        <Route path='/quiz-creator' component={QuizCreator} />
+        <Route path='/auth' component={Auth} />
         <Route path='/quiz/:id' component={Quiz} />
-        <Route path='/logout' component={Logout} />
         <Route path='/' exact component={QuizList} />
         <Redirect to='/' />
       </Switch>
     )
-  }
 
-  return (
-    <Layout>
-      {routes}
-    </Layout>
-  )
+    if(this.props.isAuthenticated) {
+      routes = (
+        <Switch>
+          <Route path='/quiz-creator' component={QuizCreator} />
+          <Route path='/quiz/:id' component={Quiz} />
+          <Route path='/logout' component={Logout} />
+          <Route path='/' exact component={QuizList} />
+          <Redirect to='/' />
+        </Switch>
+      )
+    }
+
+    return (
+      <Layout>
+        {routes}
+      </Layout>
+    )
+  }
 }
 
-function mapStateToProps(state) {
-  return {
-    isAuthenticated: !!state.auth.token
-  }
-}
+const mapStateToProps = state => ({isAuthenticated: !!state.auth.token})
 
-function mapDispatchToProps(dispatch) {
-  return {
-    autoLogin: () => dispatch(autoLogin())
-  }
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App))
+export default withRouter(connect(mapStateToProps, {autoLogin})(App))
